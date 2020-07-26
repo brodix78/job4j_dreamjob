@@ -1,6 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ page import="ru.job4j.dream.store.Store" %>
-<%@ page import="ru.job4j.dream.model.Candidate" %>
+<%@ page import="ru.job4j.dream.model.Post" %>
 <!doctype html>
 <html lang="en">
 <head>
@@ -22,36 +22,28 @@
 </head>
 <body>
 <div class="container pt-3">
-
+    <div class="row">
+        <ul class="nav">
+            <li class="nav-item">
+                <a class="nav-link" href="<%=request.getContextPath()%>/index.jsp">Главная</a>
+            </li>
+        </ul>
+    </div>
     <div class="row">
         <div class="card" style="width: 100%">
             <div class="card-header">
-                Кандидаты
+                Новый кандидат
             </div>
             <div class="card-body">
-                <table class="table">
-                    <thead>
-                    <tr>
-                        <th scope="col">Имена</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <% for (Candidate candidate : Store.instOf().findAllCandidates()) { %>
-                    <tr>
-                        <td><%= candidate.getName() %></td>
-                    </tr>
-                    <% } %>
-                    </tbody>
-                </table>
+                <form>
+                    <div class="form-group">
+                        <label>Имя</label>
+                        <input type="text" class="form-control">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Сохранить</button>
+                </form>
             </div>
         </div>
-    </div>
-        <div class="row">
-                <ul class="nav">
-                    <li class="nav-item">
-                        <a class="nav-link" href="<%=request.getContextPath()%>/candidate/edit.jsp">Новый кандидат</a>
-                    </li>
-                </ul>
     </div>
 </div>
 </body>

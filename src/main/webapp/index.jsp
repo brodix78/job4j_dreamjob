@@ -33,12 +33,15 @@
             <li class="nav-item">
                 <a class="nav-link" href="<%=request.getContextPath()%>/post/edit.jsp">Добавить вакансию</a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link" href="<%=request.getContextPath()%>/candidate/edit.jsp">Добавить кандидата</a>
+            </li>
         </ul>
     </div>
     <div class="row">
         <div class="card" style="width: 100%">
             <div class="card-header">
-                Сегоднящние вакансии.
+                Сегодняшние вакансии.
             </div>
             <div class="card-body">
             </div>
@@ -47,7 +50,7 @@
     <div class="row pt-3">
         <div class="card" style="width: 100%">
             <div class="card-header">
-                Сегоднящние кандидаты.
+                Сегодняшние кандидаты.
             </div>
             <div class="card-body">
             </div>
