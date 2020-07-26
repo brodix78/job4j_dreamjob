@@ -1,4 +1,4 @@
-package ru.job4j.hr;
+package ru.job4j.dream;
 
 import java.util.LinkedList;
 import java.util.List;

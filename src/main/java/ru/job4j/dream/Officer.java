@@ -1,4 +1,4 @@
-package ru.job4j.hr;
+package ru.job4j.dream;
 
 public class Officer {
     private String name;
