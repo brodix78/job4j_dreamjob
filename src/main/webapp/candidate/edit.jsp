@@ -1,6 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ page import="ru.job4j.dream.store.Store" %>
-<%@ page import="ru.job4j.dream.model.Post" %>
+<%@ page import="ru.job4j.dream.model.Candidate" %>
 <!doctype html>
 <html lang="en">
 <head>
@@ -21,6 +21,10 @@
     <title>Работа мечты</title>
 </head>
 <body>
+<%
+    String id = request.getParameter("id");
+    Candidate candidate = id != null ? Store.instOf().candidateById(Integer.valueOf(id)) : new Candidate(0, "");
+%>
 <div class="container pt-3">
     <div class="row">
         <ul class="nav">
@@ -32,13 +36,17 @@
     <div class="row">
         <div class="card" style="width: 100%">
             <div class="card-header">
+            <% if (id == null) { %>
                 Новый кандидат
+            <% } else { %>
+                Редактирование данных кандидата
+            <% } %>
             </div>
             <div class="card-body">
-                <form action="<%=request.getContextPath()%>/candidate/save" method="post">
+                <form action="<%=request.getContextPath()%>/candidate/save?id=<%=candidate.getId()%>" method="post">
                     <div class="form-group">
                         <label>Имя</label>
-                        <input type="text" class="form-control" name="name">
+                        <input type="text" class="form-control" name="name" value="<%=candidate.getName()%>"
                     </div>
                     <button type="submit" class="btn btn-primary">Сохранить</button>
                 </form>
