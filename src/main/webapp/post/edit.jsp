@@ -1,5 +1,5 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
-<%@ page import="ru.job4j.dream.store.Store" %>
+<%@ page import="ru.job4j.dream.store.PsqlStore" %>
 <%@ page import="ru.job4j.dream.model.Post" %>
 <!doctype html>
 <html lang="en">
@@ -25,7 +25,8 @@
     String id = request.getParameter("id");
     Post post = new Post(0, "");
     if (id != null) {
-        post = Store.instOf().postById(Integer.valueOf(id));
+        int i = Integer.valueOf(id);
+        post = PsqlStore.instOf().postById(i);
     }
 %>
 <div class="container pt-3">

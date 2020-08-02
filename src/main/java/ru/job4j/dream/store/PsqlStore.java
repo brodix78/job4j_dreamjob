@@ -27,6 +27,7 @@ public class PsqlStore implements Store{
             cfg.load(pr);
             init = new String(Files.readAllBytes(Paths.get("db/schema.sql"))).split(";");
         } catch (Exception e) {
+            System.out.println(System.getProperty("user.dir"));
             throw new IllegalStateException(e);
         }
         try {
@@ -119,7 +120,7 @@ public class PsqlStore implements Store{
     }
 
     @Override
-    public Post findByID(int id) {
+    public Post postById(int id) {
         Post post = null;
         try (Connection cn = pool.getConnection();
              PreparedStatement ps = cn.prepareStatement(
@@ -136,6 +137,26 @@ public class PsqlStore implements Store{
             e.printStackTrace();
         }
         return post;
+    }
+
+    @Override
+    public Candidate candidateById(int id) {
+        Candidate candidate = null;
+        try (Connection cn = pool.getConnection();
+             PreparedStatement ps = cn.prepareStatement(
+                     "SELECT * FROM candidate WHERE id=?")) {
+            ps.setInt(1, id);
+            ps.execute();
+            try (ResultSet it = ps.executeQuery()) {
+                if (it.next()) {
+                    candidate = new Candidate(it.getInt("id"),
+                            it.getString("name"));
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return candidate;
     }
 
     private Post createPost(Post post) {
