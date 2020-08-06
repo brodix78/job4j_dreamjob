@@ -11,10 +11,7 @@ import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 
 public class PsqlStore implements Store{
 
@@ -27,7 +24,6 @@ public class PsqlStore implements Store{
             cfg.load(pr);
             init = new String(Files.readAllBytes(Paths.get("db/schema.sql"))).split(";");
         } catch (Exception e) {
-            System.out.println(System.getProperty("user.dir"));
             throw new IllegalStateException(e);
         }
         try {
@@ -46,10 +42,10 @@ public class PsqlStore implements Store{
     }
 
     private static final class Lazy {
-        private static final Store INST = new PsqlStore();
+        private static final PsqlStore INST = new PsqlStore();
     }
 
-    public static Store instOf() {
+    public static PsqlStore instOf() {
         return Lazy.INST;
     }
 
@@ -59,7 +55,8 @@ public class PsqlStore implements Store{
                 try (Connection cn = pool.getConnection();
                     PreparedStatement ps = cn.prepareStatement(line)) {
                     ps.execute();
-                } catch (Exception empty) {
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
         }
@@ -91,14 +88,82 @@ public class PsqlStore implements Store{
                      "SELECT * FROM candidate")) {
             try (ResultSet it = ps.executeQuery()){
                 while (it.next()) {
-                    candidates.add(new Candidate(it.getInt("id"),
-                            it.getString("name")));
+                    Candidate candidate = new Candidate(it.getInt("id"),
+                            it.getString("name"));
+                    candidate.setPhotoId(it.getInt("photoId"));
+                    candidates.add(candidate);
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
         return candidates;
+    }
+
+    public int addPhoto(String file) {
+        int genId = 0;
+        try (Connection cn = pool.getConnection();
+             PreparedStatement ps = cn.prepareStatement(
+                     "INSERT INTO photo(file) VALUES(?)",
+                     PreparedStatement.RETURN_GENERATED_KEYS)) {
+            ps.setString(1, file);
+            ps.execute();
+            try (ResultSet i = ps.getGeneratedKeys()) {
+                if (i.next()) {
+                    genId = i.getInt(1);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return genId;
+    }
+
+    public Map<Integer, String> findAllPhotos() {
+        Map<Integer, String> photos = new TreeMap<>();
+        try (Connection cn = pool.getConnection();
+             PreparedStatement ps = cn.prepareStatement(
+                     "SELECT * FROM photo")) {
+            try (ResultSet it = ps.executeQuery()) {
+                while (it.next()) {
+                    photos.put(it.getInt("id"),
+                            it.getString("file"));
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return photos;
+    }
+
+    public String photoById(int id) {
+        String photo = null;
+        try (Connection cn = pool.getConnection();
+             PreparedStatement ps = cn.prepareStatement(
+                     "SELECT file FROM photo WHERE id = ?")) {
+            ps.setInt(1, id);
+            try (ResultSet it = ps.executeQuery()) {
+                while (it.next()) {
+                    photo = it.getString("file");
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return photo;
+    }
+
+
+    public void removePhoto(int id) {
+        try (Connection cn = pool.getConnection();
+             PreparedStatement ps = cn.prepareStatement(
+                     "DELETE FROM photo WHERE id = ?")) {
+            ps.setInt(1, id);
+            ps.execute();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -151,6 +216,7 @@ public class PsqlStore implements Store{
                 if (it.next()) {
                     candidate = new Candidate(it.getInt("id"),
                             it.getString("name"));
+                    candidate.setPhotoId(it.getInt("photoId"));
                 }
             }
         } catch (Exception e) {
@@ -195,10 +261,11 @@ public class PsqlStore implements Store{
     private Candidate createCandidate(Candidate candidate) {
         try (Connection cn = pool.getConnection();
              PreparedStatement ps = cn.prepareStatement(
-                     "INSERT INTO candidate(name) values(?)",
+                     "INSERT INTO candidate(name, photoId) values(?, ?)",
                      PreparedStatement.RETURN_GENERATED_KEYS
              )) {
             ps.setString(1, candidate.getName());
+            ps.setInt(2, candidate.getPhotoId());
             ps.execute();
             try (ResultSet id = ps.getGeneratedKeys()) {
                 if (id.next()) {
@@ -214,12 +281,38 @@ public class PsqlStore implements Store{
     private void updateCandidate(Candidate candidate) {
         try (Connection cn = pool.getConnection();
              PreparedStatement ps = cn.prepareStatement(
-                     "UPDATE candidate SET name = ?" +
-                             "WHERE id = ?"
+                     "UPDATE candidate SET name = ?, photoId = ?" +
+                             " WHERE id = ?"
              )){
             ps.setString(1, candidate.getName());
-            ps.setInt(2, candidate.getId());
+            ps.setInt(2, candidate.getPhotoId());
+            ps.setInt(3, candidate.getId());
             ps.execute();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void removeCandidate(int id) {
+        int photoId = candidateById(id).getPhotoId();
+        try (Connection cn = pool.getConnection();
+             PreparedStatement ps = cn.prepareStatement(
+                     "DELETE FROM candidate WHERE id = ?");
+             PreparedStatement psn = cn.prepareStatement(
+                     "SELECT * FROM candidate WHERE photoId= ?");
+             PreparedStatement psPhoto = cn.prepareStatement(
+                     "DELETE FROM photo WHERE id= ?")
+             ){
+            ps.setInt(1, id);
+            ps.execute();
+            psn.setInt(1, photoId);
+            psn.execute();
+            try (ResultSet it =psn.executeQuery()) {
+                if (!it.next()) {
+                    psPhoto.setInt(1, id);
+                    psPhoto.execute();
+                }
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }

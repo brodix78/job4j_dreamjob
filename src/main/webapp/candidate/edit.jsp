@@ -1,5 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ page import="ru.job4j.dream.store.PsqlStore" %>
+<%@ page import="ru.job4j.dream.store.Store" %>
 <%@ page import="ru.job4j.dream.model.Candidate" %>
 <!doctype html>
 <html lang="en">
@@ -23,7 +24,11 @@
 <body>
 <%
     String id = request.getParameter("id");
-    Candidate candidate = id != null ? PsqlStore.instOf().candidateById(Integer.valueOf(id)) : new Candidate(0, "");
+    Candidate candidate = (id != null && !request.getParameter("id").equals("0"))
+        ? PsqlStore.instOf().candidateById(Integer.valueOf(id)) : new Candidate(0, "");
+    if (request.getParameter("photoId") != null) {
+        candidate.setPhotoId(Integer.valueOf(request.getParameter("photoId")));
+    }
 %>
 <div class="container pt-3">
     <div class="row">
@@ -31,6 +36,7 @@
             <li class="nav-item">
                 <a class="nav-link" href="<%=request.getContextPath()%>/index.do">Главная</a>
             </li>
+
         </ul>
     </div>
     <div class="row">
@@ -43,13 +49,32 @@
             <% } %>
             </div>
             <div class="card-body">
-                <form action="<%=request.getContextPath()%>/candidates.do?id=<%=candidate.getId()%>" method="post">
+                <form action="<%=request.getContextPath()%>/candidates.do?id=<%=candidate.getId()%>&photoId=<%=candidate.getPhotoId()%>" method="post">
                     <div class="form-group">
                         <label>Имя</label>
                         <input type="text" class="form-control" name="name" value="<%=candidate.getName()%>"
+                            <div class="row">
+                                <% if (candidate.getPhotoId() != 0) { %>
+                                    <br />
+                                        <img src="<%=request.getContextPath()%>/download?photoId=<%=candidate.getPhotoId()%>" width="100px" height="100px"/>
+                                    <br />
+                                <% }%>
                     </div>
+                    <p>&nbsp;</p>
+                    <p></p>
+                    <p></p>
+                    <p></p>
+                    <br />
                     <button type="submit" class="btn btn-primary">Сохранить</button>
-                </form>
+                    <p></p>
+                    </form>
+                        <form action="<%=request.getContextPath()%>/upload">
+                        <input type="hidden" name="action" value="select"/>
+                        <input type="hidden" name="id" value="<%=candidate.getId()%>"/>
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary">Выбрать/загрузить фотографию</button>
+                        </div>
+                    </form>
             </div>
         </div>
     </div>

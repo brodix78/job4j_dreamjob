@@ -1,7 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
-<%@ page import="ru.job4j.dream.store.Store" %>
+<%@ page import="ru.job4j.dream.store.PsqlStore" %>
 <%@ page import="ru.job4j.dream.model.Candidate" %>
-<%@ page import="java.util.Collection" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jstl/core" %>
 
 <!doctype html>
@@ -26,7 +25,13 @@
 </head>
 <body>
 <div class="container pt-3">
-
+    <div class="row">
+        <ul class="nav">
+            <li class="nav-item">
+                <a class="nav-link" href="<%=request.getContextPath()%>/index.do">Главная</a>
+            </li>
+        </ul>
+    </div>
     <div class="row">
         <div class="card" style="width: 100%">
             <div class="card-header">
@@ -37,6 +42,7 @@
                     <thead>
                     <tr>
                         <th scope="col">Имена</th>
+                        <th scope="col">Фотография</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -46,7 +52,25 @@
                                 <a href='<c:url value="/candidate/edit.jsp?id=${candidate.id}"/>'>
                                     <i class="fa fa-edit mr-3"></i>
                                 </a>
+                                <form action="<c:url value='/candidates.do?id=${candidate.id}'/>" method="post" style="display: inline;">
+                                    <input type="hidden" name="action" value="delete"/>
+                                        <a href="javascript:;" onclick="parentNode.submit();">
+                                            <i class="fa fa-remove mr-3"></i>
+                                        </a>
+                                </form>
                                 <c:out value="${candidate.name}"/>
+                            </td>
+                            <td>
+                                <c:choose>
+                                    <c:when test="${candidate.photoId == '0'}">
+                                        <a>Нет фотографии</a>
+                                        <br />
+                                    </c:when>
+                                    <c:otherwise>
+                                        <img src="<c:url value='/download?photoId=${candidate.photoId}'/>" width="100px" height="100px"/>
+                                        <br />
+                                    </c:otherwise>
+                                </c:choose>
                             </td>
                         </tr>
                     </c:forEach>
