@@ -39,6 +39,9 @@
             <li class="nav-item">
                 <a class="nav-link" href="<%=request.getContextPath()%>/upload" method "post">Загрузить/выгрузить фотографию</a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link" href="<%=request.getContextPath()%>/login.jsp" method "post">Войти</a>
+            </li>
         </ul>
     </div>
     <div class="row">
