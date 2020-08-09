@@ -23,31 +23,25 @@
 <body>
 <div class="container pt-3">
     <div class="row">
-        <ul class="nav">
-            <li class="nav-item">
-                <a class="nav-link" href="<%=request.getContextPath()%>/index.do">Главная</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="<%=request.getContextPath()%>/reg.jsp">Регистрация</a>
-            </li>
-        </ul>
-    </div>
-    <div class="row">
         <div class="card" style="width: 100%">
             <div class="card-header">
-                Авторизация
+                Регистрация
             </div>
             <div class="card-body">
-                <form action="<%=request.getContextPath()%>/auth.do" method="post">
+                <form action="<%=request.getContextPath()%>/reg.do" method="post">
                     <div class="form-group">
-                        <label>Почта</label>
-                        <input type="text" class="form-control" name="email">
+                        <label>Имя пользователя</label>
+                        <input type="text" class="form-control" name="name" value='<%=request.getParameter("name")==null ? "" : request.getParameter("name")%>'>
+                    </div>
+                    <div class="form-group">
+                        <label>e-mail</label>
+                        <input type="text" class="form-control" name="email" value='<%=request.getParameter("email")==null ? "" : request.getParameter("email")%>'>
                     </div>
                     <div class="form-group">
                         <label>Пароль</label>
                         <input type="text" class="form-control" name="password">
                     </div>
-                    <button type="submit" class="btn btn-primary">Войти</button>
+                    <button type="submit" class="btn btn-primary">Регистрация</button>
                 </form>
             </div>
         </div>

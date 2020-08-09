@@ -319,10 +319,10 @@ public class PsqlStore implements Store{
         }
     }
 
-    private User createUser(User user) {
+    public User createUser(User user) {
         try (Connection cn = pool.getConnection();
              PreparedStatement ps = cn.prepareStatement(
-                     "INSERT INTO candidate(name, email, pass) values(?, ?, ?)",
+                     "INSERT INTO users(name, email, pass) values(?, ?, ?)",
                      PreparedStatement.RETURN_GENERATED_KEYS
              )) {
             ps.setString(1, user.getName());
@@ -343,7 +343,7 @@ public class PsqlStore implements Store{
     private void updateUser(User user) {
         try (Connection cn = pool.getConnection();
              PreparedStatement ps = cn.prepareStatement(
-                     "UPDATE candidate SET name = ?, email = ?, pass = ?" +
+                     "UPDATE users SET name = ?, email = ?, pass = ?" +
                              " WHERE id = ?"
              )){
             ps.setString(1, user.getName());
@@ -358,7 +358,7 @@ public class PsqlStore implements Store{
     public void removeUser(int id) {
         try (Connection cn = pool.getConnection();
              PreparedStatement ps = cn.prepareStatement(
-                     "DELETE FROM candidate WHERE id = ?")
+                     "DELETE FROM users WHERE id = ?")
         ){
             ps.setInt(1, id);
             ps.execute();
@@ -371,7 +371,7 @@ public class PsqlStore implements Store{
         User user = null;
         try (Connection cn = pool.getConnection();
              PreparedStatement ps = cn.prepareStatement(
-                     "SELECT FROM candidate WHERE email = ? AND pass = ?")) {
+                     "SELECT FROM users WHERE email = ? AND pass = ?")) {
             ps.setString(1, email);
             ps.setString(2, pass);
             ps.execute();
