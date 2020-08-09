@@ -3,6 +3,7 @@ package ru.job4j.dream.store;
 import org.apache.commons.dbcp2.BasicDataSource;
 import ru.job4j.dream.model.Candidate;
 import ru.job4j.dream.model.Post;
+import ru.job4j.dream.model.User;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -316,5 +317,76 @@ public class PsqlStore implements Store{
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private User createUser(User user) {
+        try (Connection cn = pool.getConnection();
+             PreparedStatement ps = cn.prepareStatement(
+                     "INSERT INTO candidate(name, email, pass) values(?, ?, ?)",
+                     PreparedStatement.RETURN_GENERATED_KEYS
+             )) {
+            ps.setString(1, user.getName());
+            ps.setString(2, user.getEmail());
+            ps.setString(3, user.getPassword());
+            ps.execute();
+            try (ResultSet id = ps.getGeneratedKeys()) {
+                if (id.next()) {
+                    user.setId(id.getInt(1));
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return user;
+    }
+
+    private void updateUser(User user) {
+        try (Connection cn = pool.getConnection();
+             PreparedStatement ps = cn.prepareStatement(
+                     "UPDATE candidate SET name = ?, email = ?, pass = ?" +
+                             " WHERE id = ?"
+             )){
+            ps.setString(1, user.getName());
+            ps.setString(2, user.getEmail());
+            ps.setString(3, user.getPassword());
+            ps.execute();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void removeUser(int id) {
+        try (Connection cn = pool.getConnection();
+             PreparedStatement ps = cn.prepareStatement(
+                     "DELETE FROM candidate WHERE id = ?")
+        ){
+            ps.setInt(1, id);
+            ps.execute();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public User authUser(String email, String pass) {
+        User user = null;
+        try (Connection cn = pool.getConnection();
+             PreparedStatement ps = cn.prepareStatement(
+                     "SELECT FROM candidate WHERE email = ? AND pass = ?")) {
+            ps.setString(1, email);
+            ps.setString(2, pass);
+            ps.execute();
+            try (ResultSet it = ps.executeQuery()) {
+                if (it.next()) {
+                    user = new User();
+                    user.setId(it.getInt("id"));
+                    user.setName(it.getString("name"));
+                    user.setEmail(email);
+                    user.setPassword(pass);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return user;
     }
 }
