@@ -18,13 +18,12 @@ public class CandidateServlet extends HttpServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    public void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         req.setCharacterEncoding("UTF-8");
         if ("delete".equals(req.getParameter("action"))) {
             doDelete(req, resp);
         } else {
-            System.out.println(req.getParameter("name"));
-            if (req.getParameter("name").replace(" ", "").equals("")) {
+            if (!req.getParameter("name").replace(" ", "").equals("")) {
                 Candidate candidate = new Candidate(Integer.valueOf(req.getParameter("id")),
                         req.getParameter("name"));
                 candidate.setPhotoId(Integer.valueOf(req.getParameter("photoId")));
@@ -37,7 +36,6 @@ public class CandidateServlet extends HttpServlet {
     @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         req.setCharacterEncoding("UTF-8");
-        System.out.println("das");
         PsqlStore.instOf().removeCandidate(Integer.valueOf(req.getParameter("id")));
         resp.sendRedirect(req.getContextPath() + "/candidates.do");
     }

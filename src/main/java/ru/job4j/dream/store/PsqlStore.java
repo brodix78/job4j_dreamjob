@@ -43,10 +43,10 @@ public class PsqlStore implements Store{
     }
 
     private static final class Lazy {
-        private static final PsqlStore INST = new PsqlStore();
+        private static final Store INST = new PsqlStore();
     }
 
-    public static PsqlStore instOf() {
+    public static Store instOf() {
         return Lazy.INST;
     }
 
@@ -101,6 +101,7 @@ public class PsqlStore implements Store{
         return candidates;
     }
 
+    @Override
     public int addPhoto(String file) {
         int genId = 0;
         try (Connection cn = pool.getConnection();
@@ -120,6 +121,7 @@ public class PsqlStore implements Store{
         return genId;
     }
 
+    @Override
     public Map<Integer, String> findAllPhotos() {
         Map<Integer, String> photos = new TreeMap<>();
         try (Connection cn = pool.getConnection();
@@ -137,6 +139,7 @@ public class PsqlStore implements Store{
         return photos;
     }
 
+    @Override
     public String photoById(int id) {
         String photo = null;
         try (Connection cn = pool.getConnection();
@@ -154,7 +157,7 @@ public class PsqlStore implements Store{
         return photo;
     }
 
-
+    @Override
     public void removePhoto(int id) {
         try (Connection cn = pool.getConnection();
              PreparedStatement ps = cn.prepareStatement(
@@ -294,6 +297,7 @@ public class PsqlStore implements Store{
         }
     }
 
+    @Override
     public void removeCandidate(int id) {
         int photoId = candidateById(id).getPhotoId();
         try (Connection cn = pool.getConnection();
@@ -319,6 +323,7 @@ public class PsqlStore implements Store{
         }
     }
 
+    @Override
     public User createUser(User user) {
         try (Connection cn = pool.getConnection();
              PreparedStatement ps = cn.prepareStatement(
@@ -355,6 +360,7 @@ public class PsqlStore implements Store{
         }
     }
 
+    @Override
     public void removeUser(int id) {
         try (Connection cn = pool.getConnection();
              PreparedStatement ps = cn.prepareStatement(
@@ -367,6 +373,7 @@ public class PsqlStore implements Store{
         }
     }
 
+    @Override
     public User authUser(String email, String pass) {
         User user = null;
         try (Connection cn = pool.getConnection();
