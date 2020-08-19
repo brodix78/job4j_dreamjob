@@ -26,8 +26,18 @@
             if (alarm != "") {
                 alert("Fill field(s): " + alarm);
             }
+            addRow();
             return (alarm == "");
         }
+    </script>
+    <script>
+    function addRow() {
+      $('#table tr:last').after('<tr><td>' + $('#id').val() +
+                              '</td><td>' + $('#name').val() +
+                              '</td><td>' + $('#surname').val() +
+                              '</td><td>' + $('#sex').val() +
+                              '</td><td>' + $('#description').val() + '</td></tr>'); 
+    }
     </script>
 </head>
 <body>
@@ -65,7 +75,9 @@
         </form>
     </div>
     <br/>
-    <table class="table">
+    <button onclick="addRow()">Add to table</button>
+    <br/>
+    <table class="table" id="table">
         <thead>
         <tr>
             <th>id</th>
@@ -77,7 +89,7 @@
         </thead>
         <tbody>
         <tr>
-            <th>id</th>
+            <td>id</td>
             <td>name</td>
             <td>surname</td>
             <td>sex</td>
@@ -85,7 +97,5 @@
         </tr>
         </tbody>
     </table>
-
-
 </body>
 </html>
