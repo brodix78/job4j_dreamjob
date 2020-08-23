@@ -7,12 +7,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import org.json.*;
-import java.util.Scanner;
+import ru.job4j.dream.store.SimpleStore;
 
 public class ReturnServlet extends HttpServlet {
-
-    private static JSONObject json;
-    private static JSONArray son;
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
@@ -24,7 +21,7 @@ public class ReturnServlet extends HttpServlet {
         while ((line = reader.readLine()) != null) {
             jsonBuff.append(line);
         }
-        json = new JSONObject(jsonBuff.toString());
+        SimpleStore.setJson(new JSONObject(jsonBuff.toString()));
     }
 
     @Override
@@ -32,7 +29,7 @@ public class ReturnServlet extends HttpServlet {
         resp.setContentType("text/plain");
         resp.setCharacterEncoding("UTF-8");
         PrintWriter writer = new PrintWriter(resp.getOutputStream());
-        writer.println(json);
+        writer.println(SimpleStore.getJson());
         writer.flush();
     }
 }
