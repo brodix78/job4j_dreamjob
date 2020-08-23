@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  <title>Ajax test with text</title>
+</head>
+<body>
+<script src="https://code.jquery.com/jquery-3.4.1.min.js" ></script>
+<script>
+  function receiveJSON() {
+    $(
+      $.ajax({
+        url: 'http://localhost:8080/job4j_dreamjob/return',
+        type: 'GET'
+      }).done(function(data) {
+        var rsl = "";
+        console.log("TEXT:" + data);
+        var textResp=JSON.parse(data);
+        if (textResp.length > 0) {
+          for (var i=0; i!=textResp.length; ++i) {
+            rsl+=textResp[i].text + "</br>"
+          }
+        } else {
+          rsl="</br>" + textResp.text
+        }
+        document.getElementById("sended").innerHTML=rsl;
+      }).fail(function(err) {
+        alert("Wrong data received");
+      })
+    );
+  }
+</script>
+<script>
+  function sendJSON() {
+    var input=$('#exampleText').val();
+    console.log(input);
+    $(
+      $.ajax({
+        url: 'http://localhost:8080/job4j_dreamjob/return',
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({'text' : 'text input'}),
+        dataType: 'json'
+      }));
+  }
+</script>
+<div class="container">
+  <form>
+    <div class="form-group">
+      <label for="exampleText" id="text">Input some text here, don't care</label>
+      <input type="text" class="form-control" id="exampleText" placeholder="{'text' : 'text input'}">
+    </div>
+    <button type="button" class="btn btn-primary" onclick="sendJSON()">Send</button>
+    <br/>
+    <br/>
+    <button type="button" class="btn btn-primary" onclick="receiveJSON()">Receive</button>
+  </form>
+<h5 id="sended"></h5>
+</div>
+</body>
+</html>
