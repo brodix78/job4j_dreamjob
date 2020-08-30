@@ -35,4 +35,6 @@ public interface Store {
     User createUser(User user);
 
     void removeUser(int id);
+
+    Map<Integer, String> citiesList();
 }

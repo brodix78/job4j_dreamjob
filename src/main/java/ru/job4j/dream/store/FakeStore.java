@@ -57,6 +57,11 @@ public class FakeStore implements Store {
     }
 
     @Override
+    public Map<Integer, String> citiesList() {
+        return null;
+    }
+
+    @Override
     public Collection<Post> findAllPosts() {
         return null;
     }

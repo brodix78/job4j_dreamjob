@@ -48,6 +48,10 @@
     <servlet-name>ReturnServlet</servlet-name>
     <servlet-class>ru.job4j.dream.servlet.ReturnServlet</servlet-class>
   </servlet>
+  <servlet>
+    <servlet-name>CitiesServlet</servlet-name>
+    <servlet-class>ru.job4j.dream.servlet.CitiesServlet</servlet-class>
+  </servlet>
   <servlet-mapping>
     <servlet-name>IndexServlet</servlet-name>
     <url-pattern>/index.do</url-pattern>
@@ -83,5 +87,9 @@
   <servlet-mapping>
     <servlet-name>ReturnServlet</servlet-name>
     <url-pattern>/return</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>CitiesServlet</servlet-name>
+    <url-pattern>/cities.do</url-pattern>
   </servlet-mapping>
 </web-app>
